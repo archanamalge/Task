@@ -1,0 +1,146 @@
+using System;
+using System.Data.SqlClient;
+using System.Data;
+using System.Windows.Forms;
+
+namespace DotNetDatabaseExample
+{
+    class Program
+    {
+        static string connectionString = "Your_Connection_String_Here";
+
+        static void Main()
+        {
+            // 1) Create database
+            CreateDatabase();
+
+            // 2) Create table employee along with primary key Constraint
+            CreateTable();
+
+            // 3) Print all the information
+            PrintAllInformation();
+
+            // 4) Perform CRUD operations
+            InsertData("John Doe", "john@example.com", "Developer", 50000);
+            PrintAllInformation();
+
+            UpdateData(1, "Updated John Doe", "updatedjohn@example.com", "Updated Developer", 60000);
+            PrintAllInformation();
+
+            DeleteData(1);
+            PrintAllInformation();
+
+            // 5) Update information using Id and apply validation in the entire form
+            // Implement form with validation logic for updating information
+
+            // 6) Display information in the data grid view
+            DisplayInDataGridView();
+        }
+
+        static void CreateDatabase()
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Create database query
+                string createDatabaseQuery = "CREATE DATABASE YourDatabaseName";
+
+                using (SqlCommand command = new SqlCommand(createDatabaseQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        static void CreateTable()
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Create table query
+                string createTableQuery = "CREATE TABLE employee (Id INT PRIMARY KEY IDENTITY, Name NVARCHAR(50), Email NVARCHAR(50), Position NVARCHAR(50), Salary INT)";
+
+                using (SqlCommand command = new SqlCommand(createTableQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        static void PrintAllInformation()
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Retrieve all data query
+                string retrieveDataQuery = "SELECT * FROM employee";
+
+                using (SqlCommand command = new SqlCommand(retrieveDataQuery, connection))
+                {
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Id: {reader["Id"]}, Name: {reader["Name"]}, Email: {reader["Email"]}, Position: {reader["Position"]}, Salary: {reader["Salary"]}");
+                    }
+                }
+            }
+        }
+
+        static void InsertData(string name, string email, string position, int salary)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Insert data query
+                string insertDataQuery = $"INSERT INTO employee (Name, Email, Position, Salary) VALUES ('{name}', '{email}', '{position}', {salary})";
+
+                using (SqlCommand command = new SqlCommand(insertDataQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        static void UpdateData(int id, string name, string email, string position, int salary)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Update data query
+                string updateDataQuery = $"UPDATE employee SET Name = '{name}', Email = '{email}', Position = '{position}', Salary = {salary} WHERE Id = {id}";
+
+                using (SqlCommand command = new SqlCommand(updateDataQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        static void DeleteData(int id)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Delete data query
+                string deleteDataQuery = $"DELETE FROM employee WHERE Id = {id}";
+
+                using (SqlCommand command = new SqlCommand(deleteDataQuery, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        static void DisplayInDataGridView()
+        {
+            // Implement code to display data in DataGridView (for a Windows Forms application)
+        }
+    }
+}
